@@ -1,5 +1,16 @@
+library("shiny")
+library("dplyr")
+library("tidyr")
+library("jsonlite")
+library("ggplot2")
+library("hexbin")
+library('maps')
 
-library(shiny)
+
+
+
+
+
 
 # Define UI for application that draws a histogram
 my_ui <- fluidPage(
@@ -14,11 +25,15 @@ my_ui <- fluidPage(
     #---------------------------------------------------------------------------------------------------    
     sidebarPanel(
       #-------------------------------------------------------------
-      sliderInput(inputId = ),
       
       
-      selectInput(inputId = )
       
+      
+      
+      
+      sliderInput(inputId = "happiness_id", label = "Assign a weight to how much you value happiness", min = 0, max = 100, value = 50),
+      sliderInput(inputId = "freedom_id", label = "Assign a weight to how much you value freedom", min = 0, max = 100, value = 50),
+      sliderInput(inputId = "gini_id", label = "Assign a weight to how much you value equality", min = 0, max = 100, value = 50)
       
       
       
@@ -78,5 +93,5 @@ server <- function(input, output) {
 }
 
 # Run the application 
-shinyApp(ui = ui, server = server)
+shinyApp(ui = my_ui, server = my_server)
 

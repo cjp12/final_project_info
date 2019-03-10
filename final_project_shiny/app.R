@@ -32,8 +32,8 @@ my_ui <- fluidPage(
       
       
       sliderInput(inputId = "happiness_id", label = "Assign a weight to how much you value happiness", min = 0, max = 100, value = 50),
-      sliderInput(inputId = "freedom_id", label = "Assign a weight to how much you value freedom", min = 0, max = 100, value = 50),
-      sliderInput(inputId = "gini_id", label = "Assign a weight to how much you value equality", min = 0, max = 100, value = 50)
+      sliderInput(inputId = "freedom_id", label = "Assign a weight to how much you value freedom", min = 0, max = 100, value = 50)
+      
       
       
       
@@ -128,12 +128,13 @@ my_server <- function(input, output) {
     
     composite_map_mutated_df <- composite_map_df %>% 
       mutate(
-        weight = (Value * input$gini_id[1]) + (hf_score * input$freedom_id[1]) + (Happiness.Score * input$happiness_id[1])
+        weight = (hf_score * input$freedom_id[1]) + (Happiness.Score * input$happiness_id[1])
       ) 
       
     
     p <- ggplot(composite_map_mutated_df)+
-      geom_polygon(aes(x = long, y = lat, group = group, fill = weight))
+      geom_polygon(aes(x = long, y = lat, group = group, fill = weight))+
+      scale_fill_gradient(low = "red", high = "green")
     
     
   

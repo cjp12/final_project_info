@@ -115,29 +115,28 @@ my_ui <- fluidPage(
 
 
 
-
+View(world_df)
 
 
 
 
 # Define server logic required to draw a histogram
-server <- function(input, output) {
+my_server <- function(input, output) {
    
   
   output$weighted_map <- renderPlot({
     
     composite_map_mutated_df <- composite_map_df %>% 
       mutate(
-        weight = (1 * input$gini_id[1]) + (1 * input$freedom_id[1]) + (1 * input$happiness_id[1])
+        weight = (Value * input$gini_id[1]) + (hf_score * input$freedom_id[1]) + (Happiness.Score * input$happiness_id[1])
       ) 
       
     
     p <- ggplot(composite_map_mutated_df)+
-      geom_polygon(x = lat, y = long, group = group)
+      geom_polygon(aes(x = long, y = lat, group = group, fill = weight))
     
     
-    p <- ggplot(world_df)+
-      geom_polygon(aes(x = long, y = lat, group = group))
+  
     
     
    p 

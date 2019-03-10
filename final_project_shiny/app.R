@@ -8,7 +8,7 @@ library('maps')
 
 
 
-
+source("analysis.R")
 
 
 
@@ -56,8 +56,8 @@ my_ui <- fluidPage(
       
       tabsetPanel(
         #-------------------------------------------------------------
-        tabPanel("tab1"
-                 
+        tabPanel("tab1",
+                 plotOutput(outputId = "weighted_map")
                  
         ),
         
@@ -86,9 +86,72 @@ my_ui <- fluidPage(
   )
 )
 
+
+
+
+
+#-------------------data manipulation-----------------------------------------------
+
+
+
+
+
+
+#------------------/data manipulation-----------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 # Define server logic required to draw a histogram
 server <- function(input, output) {
    
+  
+  output$weighted_map <- renderPlot({
+    
+    composite_map_mutated_df <- composite_map_df %>% 
+      mutate(
+        weight = (1 * input$gini_id[1]) + (1 * input$freedom_id[1]) + (1 * input$happiness_id[1])
+      ) 
+      
+    
+    p <- ggplot(composite_map_mutated_df)+
+      geom_polygon(x = lat, y = long, group = group)
+    
+    
+    p <- ggplot(world_df)+
+      geom_polygon(aes(x = long, y = lat, group = group))
+    
+    
+   p 
+    
+    
+  })
+  
+  
+  
+  
+  
+  
+  
+  
    
 }
 

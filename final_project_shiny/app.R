@@ -56,9 +56,10 @@ my_ui <- fluidPage(
       
       tabsetPanel(
         #-------------------------------------------------------------
-        tabPanel("tab1",
-                 plotOutput(outputId = "weighted_map")
-                 
+        tabPanel("Relocation",
+                 plotOutput(outputId = "weighted_map"),   #This outputs the color coded map
+                 textOutput(outputId = "weighted_string"),  #This outputs the text message for those using a screen reader
+                 tableOutput(outputId = "weighted_table")   #This outputs the table of the top 5 choices
         ),
         
         tabPanel("tab2"
@@ -124,29 +125,62 @@ View(world_df)
 my_server <- function(input, output) {
    
   
-  output$weighted_map <- renderPlot({
+  output$weighted_map <- renderPlot({    #this ranks and color codes the countries by their weighted amounts
     
     composite_map_mutated_df <- composite_map_df %>% 
       mutate(
         weight = (hf_score * input$freedom_id[1]) + (Happiness.Score * input$happiness_id[1])
-      ) 
-      
-    
+      )
+
     p <- ggplot(composite_map_mutated_df)+
       geom_polygon(aes(x = long, y = lat, group = group, fill = weight))+
       scale_fill_gradient(low = "red", high = "green")
     
-    
-  
-    
-    
    p 
-    
-    
   })
   
   
   
+  
+  
+  
+  output$weighted_table <- renderTable({    #this creates a table that ranks the top 5 countries
+    
+    composite_map_sliced_df <- composite_map_df %>% 
+      mutate(
+        total_score = (hf_score * input$freedom_id[1]) + (Happiness.Score * input$happiness_id[1])
+      ) %>% 
+      arrange(desc(total_score)) %>% 
+      select(c(Country.Name)) %>% 
+      unique() %>% 
+      slice(1:5)
+    
+    composite_map_sliced_df["Place"] <- c(1:5)
+    
+    composite_map_sliced_df
+  })
+  
+  
+  
+  output$weighted_string <- renderText({    #this creates a string that makes the map above easier to understand.
+  
+    best_country <- composite_map_df %>% 
+      mutate(
+        total_score = (hf_score * input$freedom_id[1]) + (Happiness.Score * input$happiness_id[1])
+      ) %>% 
+      arrange(desc(total_score)) %>% 
+      select(c(Country.Name)) %>% 
+      unique() %>% 
+      slice(1)
+    
+    freedom_value <- input$freedom_id[1]
+    happiness_value <- input$happiness_id[1]
+    best_country <- strong(best_country)
+    
+    message <- paste0("So you are ready to relocate? Well, accordinging to your assigned weight of ", freedom_value, " for freedom and your weight of ", happiness_value, " for happiness, it seems that, ", best_country, " would be the best choice for you.")
+    
+    message
+  })
   
   
   

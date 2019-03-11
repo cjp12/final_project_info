@@ -18,10 +18,10 @@ world_raw_df <- map_data("world")
 
 #--------/import data-----------------
 
-View(gini_raw_df)
-View(freedom_raw_df)
-View(happiness_raw_df)
-View(world_df)
+#View(gini_raw_df)
+#View(freedom_raw_df)
+#View(happiness_raw_df)
+#View(world_df)
 
 
 
@@ -47,9 +47,28 @@ world_df <- world_raw_df %>%
 
 
 #----------joining data------------
-composite_df <- right_join(gini_df,freedom_df, by = "Country.Name")
-composite_df <- left_join(composite_df, happiness_df, by = c("Country.Name"))
 
-composite_map_df <- left_join(composite_df, world_df, by = "Country.Name")
+
+composite_df <- left_join(world_df, freedom_df, by = "Country.Name")
+composite_map_df <- left_join(composite_df, happiness_df, by = c("Country.Name"))
+
+View(composite_df)
 View(composite_map_df)
 #--------/joining data------------
+
+
+
+
+
+
+
+
+
+composite_map_sliced_df <- composite_map_df %>% 
+  mutate(
+    total_score = (hf_score * 50) + (Happiness.Score * 50)
+  ) %>% 
+  arrange(desc(total_score)) %>% 
+  select(c(Country.Name)) %>%
+  unique() %>% 
+  View()

@@ -64,7 +64,8 @@ my_ui <- fluidPage(
         ),
         
         tabPanel("Happiness_Factors",
-                 plotOutput(outputId = "values_comparison", height=700)
+                 plotOutput(outputId = "values_comparison", height=700),
+                 textOutput(outputId = "happy_factors")
                  
         ),
         
@@ -205,7 +206,22 @@ my_server <- function(input, output) {
     
     plot
   })
-  
+
+  output$happy_factors <- renderText({   
+    
+    Happiness <- happiness_raw_df
+    Happiness.Region <- Happiness %>%
+      select(Region,Happiness.Score,Lower.Confidence.Interval,Upper.Confidence.Interval,Economy..GDP.per.Capita.,
+             Family,Health..Life.Expectancy.,Freedom,Trust..Government.Corruption.,Generosity,Dystopia.Residual) %>%
+      group_by(Region) %>%
+      summarise_all(mean)
+    
+    Happiness.Region.melt <- melt(Happiness.Region)
+    
+    message <- paste0("This set of graphs allows a closer look at all the factors researchers looked into calculating the happiness index. These graphs also show averages in each factor for each region of the world.")
+    
+    message
+  })  
 
 }
 

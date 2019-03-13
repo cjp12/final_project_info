@@ -5,6 +5,7 @@ library("jsonlite")
 library("ggplot2")
 library("hexbin")
 library('maps')
+library("reshape2")
 
 
 
@@ -62,7 +63,9 @@ my_ui <- fluidPage(
                  tableOutput(outputId = "weighted_table")   #This outputs the table of the top 5 choices
         ),
         
-        tabPanel("tab2"
+        tabPanel("Happiness_Factors",
+                 plotOutput(outputId = "values_comparison", height=700),
+                 textOutput(outputId = "happy_factors")
                  
         ),
         
@@ -120,14 +123,14 @@ my_ui <- fluidPage(
 
 
 
-View(world_df)
+#View(world_df)
 
 
 
 
 # Define server logic required to draw a histogram
 my_server <- function(input, output) {
-   
+  
   
   output$weighted_map <- renderPlot({    #this ranks and color codes the countries by their weighted amounts
     
@@ -135,12 +138,12 @@ my_server <- function(input, output) {
       mutate(
         weight = (hf_score * input$freedom_id[1]) + (Happiness.Score * input$happiness_id[1])
       )
-
+    
     p <- ggplot(composite_map_mutated_df)+
       geom_polygon(aes(x = long, y = lat, group = group, fill = weight))+
       scale_fill_gradient(low = "red", high = "green")
     
-   p 
+    p 
   })
   
   
@@ -167,7 +170,7 @@ my_server <- function(input, output) {
   
   
   output$weighted_string <- renderText({    #this creates a string that makes the map above easier to understand.
-  
+    
     best_country <- composite_map_df %>% 
       mutate(
         total_score = (hf_score * input$freedom_id[1]) + (Happiness.Score * input$happiness_id[1])
@@ -186,6 +189,7 @@ my_server <- function(input, output) {
     message
   })
   
+<<<<<<< HEAD
   
   output$references_string <- renderText({    #this creates a string that makes the map above easier to understand.
     
@@ -205,6 +209,46 @@ my_server <- function(input, output) {
   
   
    
+=======
+  output$values_comparison <- renderPlot({
+    
+    
+    
+    Happiness <- happiness_raw_df
+    Happiness.Region <- Happiness %>%
+      select(Region,Happiness.Score,Lower.Confidence.Interval,Upper.Confidence.Interval,Economy..GDP.per.Capita.,
+             Family,Health..Life.Expectancy.,Freedom,Trust..Government.Corruption.,Generosity,Dystopia.Residual) %>%
+      group_by(Region) %>%
+      summarise_all(mean)
+    
+    Happiness.Region.melt <- melt(Happiness.Region)
+    
+    
+    plot <- ggplot(Happiness.Region.melt, aes(y=value, x=Region, color=Region, fill=Region)) + 
+      geom_bar( stat="identity") + facet_wrap(~variable) + theme_bw() + 
+      theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+      labs(title = "Happiness Factors by Region") 
+    
+    plot
+  })
+
+  output$happy_factors <- renderText({   
+    
+    Happiness <- happiness_raw_df
+    Happiness.Region <- Happiness %>%
+      select(Region,Happiness.Score,Lower.Confidence.Interval,Upper.Confidence.Interval,Economy..GDP.per.Capita.,
+             Family,Health..Life.Expectancy.,Freedom,Trust..Government.Corruption.,Generosity,Dystopia.Residual) %>%
+      group_by(Region) %>%
+      summarise_all(mean)
+    
+    Happiness.Region.melt <- melt(Happiness.Region)
+    
+    message <- paste0("This set of graphs allows a closer look at all the factors researchers looked into calculating the happiness index. These graphs also show averages in each factor for each region of the world.")
+    
+    message
+  })  
+
+>>>>>>> 2bafb16870c8491da1dccfa7b933b873bdb858f8
 }
 
 # Run the application 

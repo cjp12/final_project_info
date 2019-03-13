@@ -70,8 +70,12 @@ my_ui <- fluidPage(
                  
                  
                  
+        ),
+        tabPanel("References",
+                 textOutput(outputId = "references_string")
+                 
+                 
         )
-        
         #-------------------------------------------------------------  
       )
       
@@ -182,6 +186,20 @@ my_server <- function(input, output) {
     message
   })
   
+  
+  output$references_string <- renderText({    #this creates a string that makes the map above easier to understand.
+    
+    
+    
+    ref1 <- "https://www.kaggle.com/gsutters/the-human-freedom-index"
+    ref2 <- "https://www.kaggle.com/unsdsn/world-happiness"
+    
+  
+    
+    message <- paste(ref1,ref2, sep = "/n")
+    
+    message
+  })
   
   
   

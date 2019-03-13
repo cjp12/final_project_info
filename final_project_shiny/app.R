@@ -6,7 +6,7 @@ library("ggplot2")
 library("hexbin")
 library('maps')
 library("reshape2")
-
+library("rsconnect")
 
 
 source("analysis.R")
@@ -126,7 +126,7 @@ my_ui <- fluidPage(
 
 
 
-#View(world_df)
+
 
 
 

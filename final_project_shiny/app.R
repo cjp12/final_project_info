@@ -69,21 +69,24 @@ my_ui <- fluidPage(
                  
         ),
         
-        tabPanel("tab3"
+        tabPanel("Homicide_vs_Personal_Freedom",
+                plotOutput(outputId = "homicide_comparison", height=700),
+                textOutput(outputId = "weighted_essay")
                  
-                 
-                 
+
         ),
         tabPanel("References",
                  textOutput(outputId = "references_string")
                  
                  
+        )         
+
         )
         #-------------------------------------------------------------  
       )
       
       #-------------------------------------------------------------
-    )
+    
     
     
     
@@ -231,6 +234,7 @@ my_server <- function(input, output) {
     plot
   })
 
+
   output$happy_factors <- renderText({   
     
     Happiness <- happiness_raw_df
@@ -248,7 +252,35 @@ my_server <- function(input, output) {
   })  
 
 
-}
+  
+  output$homicide_comparison <- renderPlot({
+  
+    #Plots personal freedoms (freedom of religion, expression, internet use) vs. homicide per region
+  Freedom <- freedom_raw_df
+  Freedom.region <- Freedom %>%
+    select(region, pf_ss_homicide, pf_religion, pf_expression,  pf_expression_internet) %>%
+    group_by(region) %>%
+    summarize_all(mean)
+  
+   Freedom.region.melt <- melt(Freedom.region)
+  
+   plot <- ggplot(Freedom.region.melt, aes(y = value, x = region, color = region, fill = region)) +
+     geom_bar(stat = "identity") + facet_wrap(~variable) + theme_bw() + 
+     theme(axis.text.x = element_text(angle = 90, hjust = 1)) +
+     labs(title = "Homicide vs. Personal Freedom across various regions")
+    
+   plot
+   
+   })
+
+  output$weighted_essay <- renderText({
+    message <- paste0("This analysis soke to find a correlation between violence (in the form of homicide rates) and the limiting of personal freedoms (freedom of religion, internet use, and expression). This analysis covered North America, Western Europe, Oceania and East Asia. It's easy to notice that North America has the lowest homicide rate, and highest levels of personal freedom on all three parameters in comparison to the other regions observed. Although Europe has the highest homicide rate among the three, it also has a very high rate of freedom of expression, an anomally that may be attributed to the issues between immigrants and locals. This would make sense, given the relatively lower level of perceived religious freedom. In short, while there are caveats, in general violence tends to be lower in regions where the population enjoys more personal liberty.")
+    message
+  })
+  
+} 
+
+
 
 # Run the application 
 shinyApp(ui = my_ui, server = my_server)

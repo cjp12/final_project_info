@@ -18,10 +18,10 @@ world_raw_df <- map_data("world")
 
 #--------/import data-----------------
 
-#View(gini_raw_df)
-#View(freedom_raw_df)
-#View(happiness_raw_df)
-#View(world_df)
+View(gini_raw_df)
+View(freedom_raw_df)
+View(happiness_raw_df)
+View(world_raw_df)
 
 
 

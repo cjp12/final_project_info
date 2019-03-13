@@ -189,8 +189,7 @@ my_server <- function(input, output) {
     message
   })
   
-<<<<<<< HEAD
-  
+
   output$references_string <- renderText({    #this creates a string that makes the map above easier to understand.
     
     
@@ -209,7 +208,7 @@ my_server <- function(input, output) {
   
   
    
-=======
+
   output$values_comparison <- renderPlot({
     
     
@@ -248,7 +247,7 @@ my_server <- function(input, output) {
     message
   })  
 
->>>>>>> 2bafb16870c8491da1dccfa7b933b873bdb858f8
+
 }
 
 # Run the application 
